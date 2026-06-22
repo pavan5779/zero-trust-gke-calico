@@ -1,0 +1,36 @@
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-api-egress-to-payment
+  namespace: api
+spec:
+  selector: app == "api"
+  types:
+  - Egress
+  egress:
+  - action: Allow
+    protocol: TCP
+    destination:
+      namespaceSelector: name == "payment"
+      selector: app == "payment"
+      ports:
+      - 80
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-api-ingress-to-payment
+  namespace: payment
+spec:
+  selector: app == "payment"
+  types:
+  - Ingress
+  ingress:
+  - action: Allow
+    protocol: TCP
+    source:
+      namespaceSelector: name == "api"
+      selector: app == "api"
+    destination:
+      ports:
+      - 80
