@@ -1,0 +1,53 @@
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-dns
+  namespace: frontend
+spec:
+  selector: all()
+  types:
+  - Egress
+  egress:
+  - action: Allow
+    protocol: UDP
+    destination:
+      namespaceSelector: kubernetes.io/metadata.name == "kube-system"
+      selector: k8s-app == "kube-dns"
+      ports:
+      - 53
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-dns
+  namespace: api
+spec:
+  selector: all()
+  types:
+  - Egress
+  egress:
+  - action: Allow
+    protocol: UDP
+    destination:
+      namespaceSelector: kubernetes.io/metadata.name == "kube-system"
+      selector: k8s-app == "kube-dns"
+      ports:
+      - 53
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-dns
+  namespace: payment
+spec:
+  selector: all()
+  types:
+  - Egress
+  egress:
+  - action: Allow
+    protocol: UDP
+    destination:
+      namespaceSelector: kubernetes.io/metadata.name == "kube-system"
+      selector: k8s-app == "kube-dns"
+      ports:
+      - 53
