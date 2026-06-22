@@ -1,0 +1,36 @@
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-egress-to-api
+  namespace: frontend
+spec:
+  selector: app == "frontend"
+  types:
+  - Egress
+  egress:
+  - action: Allow
+    protocol: TCP
+    destination:
+      namespaceSelector: name == "api"
+      selector: app == "api"
+      ports:
+      - 80
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-ingress-to-api
+  namespace: api
+spec:
+  selector: app == "api"
+  types:
+  - Ingress
+  ingress:
+  - action: Allow
+    protocol: TCP
+    source:
+      namespaceSelector: name == "frontend"
+      selector: app == "frontend"
+    destination:
+      ports:
+      - 80
