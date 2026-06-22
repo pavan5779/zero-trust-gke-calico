@@ -1,0 +1,36 @@
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-payment-egress-to-database
+  namespace: payment
+spec:
+  selector: app == "payment"
+  types:
+  - Egress
+  egress:
+  - action: Allow
+    protocol: TCP
+    destination:
+      namespaceSelector: name == "database"
+      selector: app == "database"
+      ports:
+      - 3306
+---
+apiVersion: projectcalico.org/v3
+kind: NetworkPolicy
+metadata:
+  name: allow-payment-ingress-to-database
+  namespace: database
+spec:
+  selector: app == "database"
+  types:
+  - Ingress
+  ingress:
+  - action: Allow
+    protocol: TCP
+    source:
+      namespaceSelector: name == "payment"
+      selector: app == "payment"
+    destination:
+      ports:
+      - 3306
